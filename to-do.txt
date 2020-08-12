@@ -1,0 +1,2 @@
+copy and paste all binaries from the downloaded avr thing, check if avr-dude and simulvar are present in the installed binaries (mostly they are not)
+remove the installed maths libraries are they are already present in the avr libraries. remove all the redundant download and install code.

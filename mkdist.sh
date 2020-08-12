@@ -36,7 +36,7 @@ version_gcc=4.9.3
 #version_gcc3=3.4.6
 #version_headers=???
 version_avrlibc=2.0.0
-
+built_avr="avr8-gnu-toolchain-darwin_x86_64"
 debug=false
 if [ "$1" = debug ]; then
     debug=true
@@ -507,7 +507,7 @@ export PATH="$installdir/automake/bin:$PATH"
 
 buildPackage gmp-"$version_gmp"  "$installdir/lib/libgmp.a" CC=gcc CXX=g++ --disable-assembly --enable-cxx --disable-debug --disable-dependency-tracking --prefix="$installdir" --enable-shared=no
 buildPackage mpfr-"$version_mpfr" "$installdir/lib/libmpfr.a" CC=gcc --with-gmp="$installdir" --prefix="$installdir" --enable-shared=no
-buildPackage mpc-"$version_mpc"   "$installdir/lib/libmpc.a"  --with-gmp="$installdir" --with-mpfr="$installdir" --prefix="$installdir" --enable-shared=no
+buildPackage mpc-"$version_mpc"   "$installdir/lib/libmpc.a" CC=gcc  --with-gmp="$installdir" --with-mpfr="$installdir" --prefix="$installdir" --enable-shared=no
 #buildPackage ppl-"$version_ppl"   "$installdir/lib/libppl.a"  --with-gmp="$installdir" --prefix="$installdir" --enable-shared=no
 #buildPackage cloog-"$version_cloog"   "$installdir/lib/libcloog-isl.a"  --with-gmp-prefix="$installdir" --prefix="$installdir" --enable-shared=no
 
@@ -519,10 +519,10 @@ rm -f "$installdir/lib/"*.dylib # ensure we have no shared libs
 (
     for arch in i386 x86_64; do
         buildCFLAGS="$commonCFLAGS -arch $arch"
-        buildPackage libusb-"$version_libusb" "$prefix/lib/libusb-1.0.a" --disable-shared
+        buildPackage libusb-"$version_libusb" "$prefix/lib/libusb-1.0.a" CC=gcc CXX=g++ --disable-shared
         export LIBUSB_1_0_CFLAGS="-I$prefix/include/libusb-1.0"
         export LIBUSB_1_0_LIBS="-lusb"
-        buildPackage libusb-compat-"$version_libusb_compat" "$prefix/lib/libusb.a" --disable-shared
+        buildPackage libusb-compat-"$version_libusb_compat" "$prefix/lib/libusb.a" CC=gcc CXX=g++ --disable-shared
         rm -f "$prefix/lib"/libusb*.dylib
         for file in "$prefix/lib"/libusb*.a; do
             if [ "$file" != "$prefix/lib/libusb*.a" ]; then
@@ -541,8 +541,11 @@ checkreturn
 #########################################################################
 # binutils and prerequisites
 #########################################################################
-buildPackage avr-binutils-"$version_binutils" "$prefix/bin/avr-nm" --target=avr
-if [ ! -f "$prefix/bfd/lib/libbfd.a" ]; then
+
+
+
+#buildPackage avr-binutils-"$version_binutils" "$prefix/bin/avr-nm" --target=avr
+if [ ! -f "$prefix/bbfd/lib/fd/lib/libbfd.a" ]; then
     mkdir -p "$prefix/bfd/include"  # copy bfd directory manually
     mkdir "$prefix/bfd/lib"
     cp compile/avr-binutils-"$version_binutils"/bfd/libbfd.a "$prefix/bfd/lib/"
