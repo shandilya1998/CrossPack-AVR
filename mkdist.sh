@@ -454,12 +454,12 @@ fi
 
 echo "Starting download at $(date +"%Y-%m-%d %H:%M:%S")"
 
-atmelBaseURL="http://distribute.atmel.no/tools/opensource/Atmel-AVR-GNU-Toolchain/$atmelToolchainVersion"
+#atmelBaseURL="http://distribute.atmel.no/tools/opensource/Atmel-AVR-GNU-Toolchain/$atmelToolchainVersion"
 # always download packages from Atmel, they sometimes update patches without updating the package name
-getPackage "$atmelBaseURL/avr-binutils.tar.bz2" alwaysDownload "avr-binutils-$version_binutils.tar.bz2"
-getPackage "$atmelBaseURL/avr-gcc.tar.bz2" alwaysDownload "avr-gcc-$version_gcc.tar.bz2"
-getPackage "$atmelBaseURL/avr8-headers.zip" alwaysDownload
-getPackage "$atmelBaseURL/avr-libc.tar.bz2" alwaysDownload "avr-libc-$version_avrlibc.tar.bz2"
+#getPackage "$atmelBaseURL/avr-binutils.tar.bz2" alwaysDownload "avr-binutils-$version_binutils.tar.bz2"
+#getPackage "$atmelBaseURL/avr-gcc.tar.bz2" alwaysDownload "avr-gcc-$version_gcc.tar.bz2"
+#getPackage "$atmelBaseURL/avr8-headers.zip" alwaysDownload
+#getPackage "$atmelBaseURL/avr-libc.tar.bz2" alwaysDownload "avr-libc-$version_avrlibc.tar.bz2"
 # We do not fetch patches available in this directory because they are already applied
 
 #getPackage http://ftp.sunet.se/pub/gnu/gcc/releases/gcc-"$version_gcc3"/gcc-"$version_gcc3".tar.bz2
