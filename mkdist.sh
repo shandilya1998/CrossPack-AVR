@@ -12,13 +12,13 @@ pkgUrlName=crosspack    # name used for http://www.obdev.at/$pkgUrlName
 pkgVersion=20170210
 
 # Build dependencies
-version_automake=1.15
+version_automake=1.16
 version_autoconf=2.68
 
-version_gdb=7.12
+version_gdb=9.1
 version_gmp=6.1.2
-version_mpfr=3.1.2
-version_mpc=1.0
+version_mpfr=4.1.0
+version_mpc=1.1.0
 version_ppl=0.12.1
 version_cloog=0.16.2
 version_libusb=1.0.21
