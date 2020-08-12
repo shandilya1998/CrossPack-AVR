@@ -30,7 +30,7 @@ version_simulavr=0.1.2.7
 # We want to add simavr to the distribution, but it does not compile easily...
 
 # The following packages are fetched from Atmel:
-atmelToolchainVersion=3.5.4
+atmelToolchainVersion=3.6.2
 version_binutils=2.26.20160125
 version_gcc=4.9.2
 #version_gcc3=3.4.6
