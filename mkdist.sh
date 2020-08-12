@@ -12,11 +12,11 @@ pkgUrlName=crosspack    # name used for http://www.obdev.at/$pkgUrlName
 pkgVersion=20170210
 
 # Build dependencies
-version_automake=1.16
+version_automake=1.15
 version_autoconf=2.68
 
 version_gdb=9.1
-version_gmp=6.1.2
+version_gmp=6.2.0
 version_mpfr=4.1.0
 version_mpc=1.1.0
 version_ppl=0.12.1
@@ -32,7 +32,7 @@ version_simulavr=0.1.2.7
 # The following packages are fetched from Atmel:
 atmelToolchainVersion=3.6.2
 version_binutils=2.26.20160125
-version_gcc=4.9.2
+version_gcc=4.9.3
 #version_gcc3=3.4.6
 #version_headers=???
 version_avrlibc=2.0.0
@@ -505,8 +505,8 @@ export PATH="$installdir/autoconf/bin:$PATH"
 buildPackage automake-"$version_automake" "$installdir/automake/bin/automake" --prefix="$installdir/automake"
 export PATH="$installdir/automake/bin:$PATH"
 
-buildPackage gmp-"$version_gmp"   "$installdir/lib/libgmp.a"  --prefix="$installdir" --enable-cxx --enable-shared=no --disable-assembly
-buildPackage mpfr-"$version_mpfr" "$installdir/lib/libmpfr.a" --with-gmp="$installdir" --prefix="$installdir" --enable-shared=no
+buildPackage gmp-"$version_gmp"  "$installdir/lib/libgmp.a" CC=gcc CXX=g++ --disable-assembly --enable-cxx --disable-debug --disable-dependency-tracking --prefix="$installdir" --enable-shared=no
+buildPackage mpfr-"$version_mpfr" "$installdir/lib/libmpfr.a" CC=gcc --with-gmp="$installdir" --prefix="$installdir" --enable-shared=no
 buildPackage mpc-"$version_mpc"   "$installdir/lib/libmpc.a"  --with-gmp="$installdir" --with-mpfr="$installdir" --prefix="$installdir" --enable-shared=no
 #buildPackage ppl-"$version_ppl"   "$installdir/lib/libppl.a"  --with-gmp="$installdir" --prefix="$installdir" --enable-shared=no
 #buildPackage cloog-"$version_cloog"   "$installdir/lib/libcloog-isl.a"  --with-gmp-prefix="$installdir" --prefix="$installdir" --enable-shared=no
