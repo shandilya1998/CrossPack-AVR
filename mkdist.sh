@@ -16,11 +16,6 @@ version_automake=1.15
 version_autoconf=2.68
 
 version_gdb=9.1
-version_gmp=6.2.0
-version_mpfr=4.1.0
-version_mpc=1.1.0
-version_ppl=0.12.1
-version_cloog=0.16.2
 version_libusb=1.0.21
 version_libusb_compat=0.1.5
 version_avarice=2.13
@@ -42,7 +37,11 @@ if [ "$1" = debug ]; then
     debug=true
 fi
 
-prefix="/usr/local/$pkgUnixName-$pkgVersion"
+
+prefix="/usr/local/$pkgUnixName"
+if [ -d $prefix ]; then
+    rm -rf $prefix
+fi
 configureArgs="--disable-dependency-tracking --disable-nls --disable-werror"
 
 umask 0022
@@ -465,9 +464,9 @@ echo "Starting download at $(date +"%Y-%m-%d %H:%M:%S")"
 #getPackage http://ftp.sunet.se/pub/gnu/gcc/releases/gcc-"$version_gcc3"/gcc-"$version_gcc3".tar.bz2
 
 getPackage https://ftp.gnu.org/gnu/automake/automake-"$version_automake".tar.gz
-getPackage https://gmplib.org/download/gmp/gmp-"$version_gmp".tar.bz2
-getPackage https://ftp.gnu.org/gnu/mpfr/mpfr-"$version_mpfr".tar.bz2
-getPackage https://ftp.gnu.org/gnu/mpc/mpc-"$version_mpc".tar.gz
+#getPackage https://gmplib.org/download/gmp/gmp-"$version_gmp".tar.bz2
+#getPackage https://ftp.gnu.org/gnu/mpfr/mpfr-"$version_mpfr".tar.bz2
+#getPackage https://ftp.gnu.org/gnu/mpc/mpc-"$version_mpc".tar.gz
 # We would like to compile with cloog, but linking 32 bit C++ code fails with clang.
 #getPackage http://bugseng.com/products/ppl/download/ftp/releases/"$version_ppl"/ppl-"$version_ppl".tar.bz2
 #getPackage http://gcc.cybermirror.org/infrastructure/cloog-"$version_cloog".tar.gz
@@ -505,9 +504,9 @@ export PATH="$installdir/autoconf/bin:$PATH"
 buildPackage automake-"$version_automake" "$installdir/automake/bin/automake" --prefix="$installdir/automake"
 export PATH="$installdir/automake/bin:$PATH"
 
-buildPackage gmp-"$version_gmp"  "$installdir/lib/libgmp.a" CC=gcc CXX=g++ --disable-assembly --enable-cxx --disable-debug --disable-dependency-tracking --prefix="$installdir" --enable-shared=no
-buildPackage mpfr-"$version_mpfr" "$installdir/lib/libmpfr.a" CC=gcc --with-gmp="$installdir" --prefix="$installdir" --enable-shared=no
-buildPackage mpc-"$version_mpc"   "$installdir/lib/libmpc.a" CC=gcc  --with-gmp="$installdir" --with-mpfr="$installdir" --prefix="$installdir" --enable-shared=no
+#buildPackage gmp-"$version_gmp"  "$installdir/lib/libgmp.a" CC=gcc CXX=g++ --disable-assembly --enable-cxx --disable-debug --disable-dependency-tracking --prefix="$installdir" --enable-shared=no
+#buildPackage mpfr-"$version_mpfr" "$installdir/lib/libmpfr.a" CC=gcc --with-gmp="$installdir" --prefix="$installdir" --enable-shared=no
+#buildPackage mpc-"$version_mpc"   "$installdir/lib/libmpc.a" CC=gcc  --with-gmp="$installdir" --with-mpfr="$installdir" --prefix="$installdir" --enable-shared=no
 #buildPackage ppl-"$version_ppl"   "$installdir/lib/libppl.a"  --with-gmp="$installdir" --prefix="$installdir" --enable-shared=no
 #buildPackage cloog-"$version_cloog"   "$installdir/lib/libcloog-isl.a"  --with-gmp-prefix="$installdir" --prefix="$installdir" --enable-shared=no
 
@@ -542,70 +541,54 @@ checkreturn
 # binutils and prerequisites
 #########################################################################
 
-
-
-#buildPackage avr-binutils-"$version_binutils" "$prefix/bin/avr-nm" --target=avr
-if [ ! -f "$prefix/bbfd/lib/fd/lib/libbfd.a" ]; then
-    mkdir -p "$prefix/bfd/include"  # copy bfd directory manually
-    mkdir "$prefix/bfd/lib"
-    cp compile/avr-binutils-"$version_binutils"/bfd/libbfd.a "$prefix/bfd/lib/"
-    cp compile/avr-binutils-"$version_binutils"/bfd/bfd.h "$prefix/bfd/include/"
-    cp compile/avr-binutils-"$version_binutils"/include/ansidecl.h "$prefix/bfd/include/"
-    cp compile/avr-binutils-"$version_binutils"/include/symcat.h "$prefix/bfd/include/"
+if [ ! -d "$prefix/avr/" ]; then
+    mkdir "$prefix/avr"
 fi
-if [ ! -f "$prefix/lib/libiberty.a" ]; then
+cp -a "$built_avr/avr/." "$prefix/avr/"
+if [ ! -d "$prefix/bin/" ]; then
+    mkdir "$prefix/bin"
+fi
+cp -a "$built_avr/bin/." "$prefix/bin/"
+if [ ! -d "$prefix/doc/" ]; then
+    mkdir "$prefix/doc"
+fi
+cp -a "$built_avr/doc/." "$prefix/doc/"
+if [ ! -d "$prefix/include/" ]; then
+    mkdir "$prefix/include"
+fi
+cp -a "$built_avr/include/." "$prefix/include/"
+if [ ! -d "$prefix/info/" ]; then
+    mkdir "$prefix/info"
+fi
+cp -a "$built_avr/info/." "$prefix/info/"
+if [ ! -d "$prefix/lib/" ]; then
     mkdir "$prefix/lib"
-    cp compile/avr-binutils-"$version_binutils"/libiberty/libiberty.a "$prefix/lib/"
 fi
-
-#########################################################################
-# gcc bootstrap
-#########################################################################
-buildPackage avr-gcc-"$version_gcc" "$prefix/bin/avr-gcc" --target=avr --enable-languages=c --disable-libssp --disable-libada --with-dwarf2 --disable-shared --with-avrlibc=yes --with-gmp="$installdir" --with-mpfr="$installdir" --with-mpc="$installdir"
-
-# --with-ppl="$installdir" --with-cloog="$installdir" --enable-cloog-backend=isl
-# We would like to compile with cloog, but linking 32 bit C++ code fails with clang.
-
-# If we want to support avr-gcc version 3.x, we want to have it available as
-# separate binary avr-gcc3, not with avr-gcc-select. Unfortunately, we also need
-# a separate compile of avr-libc with gcc 3.x (other built-in functions etc).
-# We don't enable this until we have found a good way to hold both compiles of
-# avr-libc in parallel.
-#for i in avr-ar avr-ranlib; do
-#    ln -s $i "$prefix/bin/${i}3"
-#done
-#buildPackage gcc-"$version_gcc3" "$prefix/bin/avr-gcc3" --target=avr --enable-languages=c,c++ --disable-libssp --program-suffix=3 --program-prefix="avr-"
-#for i in avr-ar avr-ranlib; do
-#    rm -f "$prefix/bin/${i}3"
-#done
-
-#########################################################################
-# avr-libc
-#########################################################################
-unpackPackage "avr8-headers"
-buildPackage avr-libc-"$version_avrlibc" "$prefix/avr/lib/libc.a" --host=avr --enable-device-lib
-copyPackage avr-libc-user-manual-"$version_avrlibc" "$prefix/doc/avr-libc"
-copyPackage avr-libc-manpages-"$version_avrlibc" "$prefix/man"
-
-#########################################################################
-# avr-gcc full build
-#########################################################################
-buildPackage avr-gcc-"$version_gcc" "$prefix/bin/avr-g++" --target=avr --enable-languages=c,c++ --disable-libssp --disable-libada --with-dwarf2 --disable-shared --with-avrlibc=yes --with-gmp="$installdir" --with-mpfr="$installdir" --with-mpc="$installdir"
-
+cp -a "$built_avr/lib/." "$prefix/lib/"
+if [ ! -d "$prefix/libexec/" ]; then
+    mkdir "$prefix/libexec"
+fi
+cp - a "$built_avr/libexec/." "$prefix/libexec/"
+if [ ! -d "$prefix/man/" ]; then
+    mkdir "$prefix/man"
+fi
+cp - a "$built_avr/man/." "$prefix/man/"
+if [ ! -d "$prefix/x86_64-apple-darwin17.0.0/" ]; then
+    mkdir "$prefix/x86_64-apple-darwin17.0.0"
+fi
+cp - a "$built_avr/x86_64-apple-darwin17.0.0/." "$prefix/x86_64-apple-darwin17.0.0/"
+if [ ! -d "$prefix/share/" ]; then
+    mkdir "$prefix/share"
+fi
+cp - a "$built_avr/share/." "$prefix/share/"
 #########################################################################
 # gdb and simulavr
 #########################################################################
-buildPackage gdb-"$version_gdb" "$prefix/bin/avr-gdb" --target=avr --without-python
-(
-    binutils="$(pwd)/compile/avr-binutils-$version_binutils"
-    buildCFLAGS="$buildCFLAGS $("$prefix/bin/libusb-config" --cflags) -I$binutils/bfd -I$binutils/include -O"
-    export LDFLAGS="$LDFLAGS $("$prefix/bin/libusb-config" --libs) -L$binutils/bfd -lz -L$binutils/libiberty -liberty"
-    buildPackage avarice-"$version_avarice" "$prefix/bin/avarice"
-)
-checkreturn
+buildPackage avarice-"$version_avarice" "$prefix/bin/avarice" CC=gcc CXX=g++
+
 (
     export CFLAGS="-Wno-error -g -O2"
-    buildPackage simulavr-"$version_simulavr" "$prefix/bin/simulavr" --with-bfd="$prefix/bfd" --with-libiberty="$prefix" --disable-static --enable-dependency-tracking
+    buildPackage simulavr-"$version_simulavr" "$prefix/bin/simulavr" CC=gcc  --with-libiberty="$prefix" --disable-static --enable-dependency-tracking
 )
 checkreturn
 
